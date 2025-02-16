@@ -5,17 +5,19 @@ namespace InvoicerAPI.Core.Entities;
 public class Invoice
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
-	public Guid CustomerId { get; set; } = Guid.Parse("631c7b2694034dbeb3ccb6e637041376");
+	public Guid CustomerId { get; set; }
+	public Customer Customer { get; set; }
+	public User User { get; set; }
 
 	/// <summary>
 	/// Start Date of the work period.
 	/// </summary>
-	public DateTimeOffset StartDate { get; set; } = DateTimeOffset.UtcNow;
+	public DateTimeOffset StartDate { get; set; }
 
 	/// <summary>
 	/// End Date of the work period.
 	/// </summary>
-	public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow.AddMonths(1);
+	public DateTimeOffset EndDate { get; set; }
 	public IList<InvoiceRow> Rows { get; set; } = null;
 
 	/// <summary>
@@ -38,6 +40,6 @@ public class Invoice
 	/// <summary>
 	/// It changes on soft delete.
 	/// </summary>
-	public DateTimeOffset DeletedAt { get; set; }
+	public DateTimeOffset DeletedAt { get; set; } = DateTimeOffset.MinValue;
 
 }

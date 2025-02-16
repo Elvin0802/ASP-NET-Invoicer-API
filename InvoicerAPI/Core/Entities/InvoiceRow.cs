@@ -4,6 +4,7 @@ public class InvoiceRow
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
 	public Guid InvoiceId { get; set; }
+	public Invoice Invoice { get; set; }
 
 	/// <summary>
 	/// Name of work.

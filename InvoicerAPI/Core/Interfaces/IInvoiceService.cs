@@ -1,4 +1,4 @@
-﻿using InvoicerAPI.Application.DTOs;
+﻿using InvoicerAPI.Application.DTOs.Invoice;
 using InvoicerAPI.Application.DTOs.Pagination;
 using InvoicerAPI.Core.Enums;
 

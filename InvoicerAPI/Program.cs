@@ -1,4 +1,6 @@
-﻿using InvoicerAPI.Application.Services;
+﻿using InvoicerAPI;
+using InvoicerAPI.Application.Services.Invoice;
+using InvoicerAPI.Application.Services.User;
 using InvoicerAPI.Core.Interfaces;
 using InvoicerAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AuthenticationAndAuthorization(builder.Configuration);
+
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-//builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 

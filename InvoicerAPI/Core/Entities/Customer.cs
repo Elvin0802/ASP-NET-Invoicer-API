@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿namespace InvoicerAPI.Core.Entities;
 
-namespace InvoicerAPI.Core.Entities;
-
-public class User : IdentityUser
+public class Customer
 {
+	public Guid Id { get; set; } = Guid.NewGuid();
+	public User User { get; set; }
 	public string Name { get; set; }
-	public string? Address { get; set; }
-	public string? PhoneNumber { get; set; }
-	public IList<Customer> Customers { get; set; }
+	public string Email { get; set; }
+	public string PhoneNumber { get; set; }
 	public IList<Invoice> Invoices { get; set; }
-	public string? RefreshToken { get; set; }
 
 	/// <summary>
 	/// It sets with creating.
@@ -25,5 +23,4 @@ public class User : IdentityUser
 	/// It changes on soft delete.
 	/// </summary>
 	public DateTimeOffset DeletedAt { get; set; }
-
 }

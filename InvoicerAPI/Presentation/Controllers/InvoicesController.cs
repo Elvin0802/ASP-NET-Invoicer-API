@@ -1,4 +1,4 @@
-﻿using InvoicerAPI.Application.DTOs;
+﻿using InvoicerAPI.Application.DTOs.Invoice;
 using InvoicerAPI.Application.DTOs.Pagination;
 using InvoicerAPI.Core.Enums;
 using InvoicerAPI.Core.Interfaces;
@@ -17,7 +17,7 @@ public class InvoicesController : ControllerBase
 		_service = service;
 	}
 
-	[HttpPost("create")]
+	[HttpPost("/create")]
 	public async Task<ActionResult<InvoiceDto>> CreateInvoice([FromBody] CreateInvoiceDto dto)
 	{
 		try

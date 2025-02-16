@@ -1,4 +1,4 @@
-﻿using InvoicerAPI.Application.DTOs;
+﻿using InvoicerAPI.Application.DTOs.Invoice;
 using InvoicerAPI.Application.DTOs.Pagination;
 using InvoicerAPI.Core.Entities;
 using InvoicerAPI.Core.Enums;
@@ -7,7 +7,7 @@ using InvoicerAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
-namespace InvoicerAPI.Application.Services;
+namespace InvoicerAPI.Application.Services.Invoice;
 
 public class InvoiceService : IInvoiceService
 {
@@ -66,7 +66,7 @@ public class InvoiceService : IInvoiceService
 
 	public Task<InvoiceDto> CreateInvoiceAsync(CreateInvoiceDto createInvoiceDto)
 	{
-		var invoice = new Invoice()
+		var invoice = new Core.Entities.Invoice()
 		{
 			CreatedAt = DateTime.UtcNow,
 			Status = InvoiceStatus.Created,
@@ -192,7 +192,7 @@ public class InvoiceService : IInvoiceService
 
 		query = query.Where(i => i.CreatedAt > i.DeletedAt);
 
-		if (!(string.IsNullOrEmpty(filterDto.SearchText)))
+		if (!string.IsNullOrEmpty(filterDto.SearchText))
 			query = query.Where(i => i.Comment!.Contains(filterDto.SearchText, StringComparison.CurrentCultureIgnoreCase));
 
 		if (filterDto.Status.HasValue)

@@ -1,4 +1,4 @@
-﻿namespace InvoicerAPI.Application.DTOs;
+﻿namespace InvoicerAPI.Application.DTOs.Invoice;
 
 public class CreateInvoiceRowDto
 {
