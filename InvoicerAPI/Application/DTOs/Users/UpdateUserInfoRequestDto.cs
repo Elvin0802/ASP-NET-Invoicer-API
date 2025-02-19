@@ -1,7 +1,6 @@
-﻿using InvoicerAPI.Core.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace InvoicerAPI.Application.DTOs.User;
+namespace InvoicerAPI.Application.DTOs.Users;
 
 public class UpdateUserInfoRequestDto
 {

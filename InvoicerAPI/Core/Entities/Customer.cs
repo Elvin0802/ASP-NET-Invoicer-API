@@ -3,10 +3,10 @@
 public class Customer
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
-	public User User { get; set; }
 	public string Name { get; set; }
 	public string Email { get; set; }
 	public string PhoneNumber { get; set; }
+	public User User { get; set; }
 	public IList<Invoice> Invoices { get; set; }
 
 	/// <summary>
@@ -22,5 +22,5 @@ public class Customer
 	/// <summary>
 	/// It changes on soft delete.
 	/// </summary>
-	public DateTimeOffset DeletedAt { get; set; }
+	public DateTimeOffset DeletedAt { get; set; } = DateTimeOffset.MinValue;
 }

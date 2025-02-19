@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicerAPI.Migrations
 {
     [DbContext(typeof(InvoicerDbContext))]
-    [Migration("20250215231131_InitMig")]
+    [Migration("20250218153851_InitMig")]
     partial class InitMig
     {
         /// <inheritdoc />
@@ -53,6 +53,7 @@ namespace InvoicerAPI.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -96,6 +97,7 @@ namespace InvoicerAPI.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -373,7 +375,9 @@ namespace InvoicerAPI.Migrations
                 {
                     b.HasOne("InvoicerAPI.Core.Entities.User", "User")
                         .WithMany("Customers")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -388,7 +392,9 @@ namespace InvoicerAPI.Migrations
 
                     b.HasOne("InvoicerAPI.Core.Entities.User", "User")
                         .WithMany("Invoices")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
 

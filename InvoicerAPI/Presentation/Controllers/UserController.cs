@@ -1,11 +1,10 @@
 ﻿using InvoicerAPI.Application.DTOs.Auth;
+using InvoicerAPI.Application.DTOs.Users;
 using InvoicerAPI.Core.Entities;
 using InvoicerAPI.Core.Interfaces.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using InvoicerAPI.Application.DTOs.User;
-using Azure.Core;
 
 namespace InvoicerAPI.Presentation.Controllers;
 
@@ -29,42 +28,56 @@ public class UserController : ControllerBase
 	[HttpPost("/login")]
 	public async Task<ActionResult<AuthTokenDto>> Login([FromBody] LoginUserRequestDto request)
 	{
-		var user = await _userManager.FindByEmailAsync(request.Email);
+		try
+		{
+			var user = await _userManager.FindByEmailAsync(request.Email);
 
-		if (user is null) return NotFound("User not found. Login failed.");
+			if (user is null) return NotFound("User not found. Login failed.");
 
-		var canSignIn = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+			var canSignIn = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-		if (!canSignIn.Succeeded) return Unauthorized("Something went wrong, login failed.");
+			if (!canSignIn.Succeeded) return Unauthorized("Something went wrong, login failed.");
 
-		return Ok(await GenerateToken(user));
+			return Ok(await GenerateToken(user));
+		}
+		catch
+		{
+			return StatusCode(500, "An unexpected error occurred.");
+		}
 	}
 
 	[HttpPost("/register")]
 	public async Task<ActionResult<AuthTokenDto>> Register([FromBody] RegisterUserRequestDto request)
 	{
-		var exisitingUser = await _userManager.FindByEmailAsync(request.Email);
-
-		if (exisitingUser is not null) return Conflict("User already exsist, register failed.");
-
-		var user = new User
+		try
 		{
-			Email = request.Email,
-			UserName = request.Email,
-			RefreshToken = Guid.NewGuid().ToString("N").ToLower(),
-			Name = request.Name,
-			Address = request.Address,
-			PhoneNumber = request.PhoneNumber,
-			CreatedAt = DateTimeOffset.UtcNow,
-			UpdatedAt = DateTimeOffset.UtcNow,
-			DeletedAt = DateTimeOffset.MinValue
-		};
+			var exisitingUser = await _userManager.FindByEmailAsync(request.Email);
 
-		var result = await _userManager.CreateAsync(user, request.Password);
+			if (exisitingUser is not null) return Conflict("User already exsist, register failed.");
 
-		if (!result.Succeeded) return BadRequest(result.Errors);
+			var user = new User
+			{
+				Email = request.Email,
+				UserName = request.Email,
+				RefreshToken = Guid.NewGuid().ToString("N").ToLower(),
+				Name = request.Name,
+				Address = request.Address,
+				PhoneNumber = request.PhoneNumber,
+				CreatedAt = DateTimeOffset.UtcNow,
+				UpdatedAt = DateTimeOffset.UtcNow,
+				DeletedAt = DateTimeOffset.MinValue
+			};
 
-		return Ok(await GenerateToken(user));
+			var result = await _userManager.CreateAsync(user, request.Password);
+
+			if (!result.Succeeded) return BadRequest(result.Errors);
+
+			return Ok(await GenerateToken(user));
+		}
+		catch
+		{
+			return StatusCode(500, "An unexpected error occurred.");
+		}
 	}
 
 	private async Task<AuthTokenDto> GenerateToken(User user)
@@ -91,62 +104,91 @@ public class UserController : ControllerBase
 	[HttpPost("/refresh")]
 	public async Task<ActionResult<AuthTokenDto>> Refresh([FromBody] RefreshTokenRequestDto request)
 	{
-		var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
+		try
+		{
+			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
 
-		if (user is null) return Unauthorized("Refresh is failed.");
+			if (user is null) return Unauthorized("Refresh is failed.");
 
-		return Ok(await GenerateToken(user));
+			return Ok(await GenerateToken(user));
+		}
+		catch
+		{
+			return StatusCode(500, "An unexpected error occurred.");
+		}
 	}
 
 	[HttpPut("/update-info")]
 	public async Task<ActionResult<AuthTokenDto>> UpdateUserInfo([FromBody] UpdateUserInfoRequestDto request)
 	{
-		if (request is null || request.Id == Guid.Empty) return BadRequest(nameof(request));
+		try
+		{
+			if (request is null || request.Id == Guid.Empty) return BadRequest(nameof(request));
 
-		var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id.ToString());
+			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id.ToString());
 
-		if (user is null) return Unauthorized("User not found. Update User Info is failed.");
+			if (user is null) return Unauthorized("User not found. Update User Info is failed.");
 
-		if (!(string.IsNullOrEmpty(request.Name)) && request.Name != user.Name)
-			user.Name = request.Name;
+			if (!(string.IsNullOrEmpty(request.Name)) && request.Name != user.Name)
+				user.Name = request.Name;
 
-		if (!(string.IsNullOrEmpty(request.Address)) && request.Address != user.Address)
-			user.Address = request.Address;
+			if (!(string.IsNullOrEmpty(request.Address)) && request.Address != user.Address)
+				user.Address = request.Address;
 
-		if (!(string.IsNullOrEmpty(request.Email)) && request.Email != user.Email)
-			user.Email = request.Email;
+			if (!(string.IsNullOrEmpty(request.Email)) && request.Email != user.Email)
+				user.Email = request.Email;
 
-		if (!(string.IsNullOrEmpty(request.PhoneNumber)) && request.PhoneNumber != user.PhoneNumber)
-			user.PhoneNumber = request.PhoneNumber;
+			if (!(string.IsNullOrEmpty(request.PhoneNumber)) && request.PhoneNumber != user.PhoneNumber)
+				user.PhoneNumber = request.PhoneNumber;
 
-		await _userManager.UpdateAsync(user);
+			await _userManager.UpdateAsync(user);
 
-		return Ok(await GenerateToken(user));
+			return Ok(await GenerateToken(user));
+		}
+		catch
+		{
+			return StatusCode(500, "An unexpected error occurred.");
+		}
 	}
 
 	[HttpPut("/change-password")]
 	public async Task<ActionResult<AuthTokenDto>> ChangeUserPassword([FromBody] ChangeUserPasswordRequestDto request)
 	{
-		if (request is null || request.Id == Guid.Empty ||
-			string.IsNullOrEmpty(request.OldPassword) || string.IsNullOrEmpty(request.NewPassword))
-			return BadRequest(nameof(request));
+		try
+		{
+			if (request is null
+				|| request.Id == Guid.Empty
+				|| string.IsNullOrEmpty(request.OldPassword)
+				|| string.IsNullOrEmpty(request.NewPassword))
+			{
+				return BadRequest(nameof(request));
+			}
 
-		var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id.ToString());
+			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id.ToString());
 
-		if (user is null) return Unauthorized("User not found. Change User Password is failed.");
+			if (user is null)
+				return Unauthorized("User not found. Change User Password is failed.");
 
-		if (request.OldPassword == request.NewPassword || user.PasswordHash != request.OldPassword)
-			BadRequest(nameof(request));
+			if (request.OldPassword == request.NewPassword
+				|| user.PasswordHash != request.OldPassword)
+			{
+				BadRequest(nameof(request));
+			}
 
-		await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+			await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
 
-		await _userManager.UpdateAsync(user);
+			await _userManager.UpdateAsync(user);
 
-		return Ok(await GenerateToken(user));
+			return Ok(await GenerateToken(user));
+		}
+		catch
+		{
+			return StatusCode(500, "An unexpected error occurred.");
+		}
 	}
 
 
-	[HttpDelete("{id}/delete")]
+	[HttpDelete("/users/{id}/delete")]
 	public async Task<ActionResult> DeleteUser(Guid id)
 	{
 		try

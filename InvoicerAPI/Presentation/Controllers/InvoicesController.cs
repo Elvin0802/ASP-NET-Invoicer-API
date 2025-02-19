@@ -1,27 +1,37 @@
-﻿using InvoicerAPI.Application.DTOs.Invoice;
+﻿using InvoicerAPI.Application.DTOs.Invoices;
 using InvoicerAPI.Application.DTOs.Pagination;
 using InvoicerAPI.Core.Enums;
 using InvoicerAPI.Core.Interfaces;
+using InvoicerAPI.Core.Interfaces.Providers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoicerAPI.Presentation.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class InvoicesController : ControllerBase
 {
 	private readonly IInvoiceService _service;
+	private readonly IRequestUserProvider _userProvider;
 
-	public InvoicesController(IInvoiceService service)
+	public InvoicesController(IInvoiceService service, IRequestUserProvider userProvider)
 	{
 		_service = service;
+		_userProvider = userProvider;
 	}
 
-	[HttpPost("/create")]
+	[HttpPost("/create-invoice")]
 	public async Task<ActionResult<InvoiceDto>> CreateInvoice([FromBody] CreateInvoiceDto dto)
 	{
 		try
 		{
+			var user = _userProvider.GetUserInfo();
+
+			dto.UserId = Guid.Parse(user!.Id);
+			dto.CustomerId = Guid.Parse("4b2faa90-7845-4b7a-abaa-5be358a88415");
+
 			var invoice = await _service.CreateInvoiceAsync(dto);
 
 			return invoice is null ? NotFound() : invoice;
@@ -47,7 +57,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpGet("/invoice")]
+	[HttpGet("/{id}/invoice")]
 	public async Task<ActionResult<InvoiceDto>> GetInvoice(Guid id)
 	{
 		try
@@ -62,7 +72,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpPatch("{id}/change-status")]
+	[HttpPatch("/{id}/change-status")]
 	public async Task<ActionResult<InvoiceDto>> ChangeInvoiceStatus(Guid id, [FromBody] InvoiceStatus newStatus)
 	{
 		try
@@ -77,14 +87,14 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpPut("{id}/edit")]
+	[HttpPut("/{id}/edit-invoice")]
 	public async Task<ActionResult<InvoiceDto>> EditInvoice(Guid id, [FromBody] EditInvoiceDto dto)
 	{
 		try
 		{
 			var invoice = await _service.EditInvoiceAsync(id, dto);
 
-			return (await _service.EditInvoiceAsync(id, dto) is null) ? NotFound() : invoice;
+			return (invoice is null) ? NotFound() : invoice;
 		}
 		catch
 		{
@@ -92,7 +102,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpDelete("{id}/delete")]
+	[HttpDelete("/{id}/delete-invoice")]
 	public async Task<ActionResult> DeleteInvoice(Guid id)
 	{
 		try
@@ -105,7 +115,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpDelete("{id}/archive")]
+	[HttpDelete("/{id}/archive-invoice")]
 	public async Task<ActionResult> ArchiveInvoice(Guid id)
 	{
 		try

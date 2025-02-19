@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InvoicerAPI.Application.DTOs.User;
+namespace InvoicerAPI.Application.DTOs.Users;
 
 public class RegisterUserRequestDto
 {

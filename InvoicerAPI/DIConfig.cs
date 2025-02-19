@@ -26,10 +26,6 @@ public static class DIConfig
 					Version = "v: 1.0"
 				});
 
-			var filePath = Path.Combine(AppContext.BaseDirectory, "Documentation.xml");
-
-			setup.IncludeXmlComments(filePath);
-
 			setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
 			{
 				Name = "Authorization",
@@ -42,7 +38,7 @@ public static class DIConfig
 
 			setup.AddSecurityRequirement(new OpenApiSecurityRequirement
 			{
-			{
+				{
 					new OpenApiSecurityScheme
 						{
 							Reference = new OpenApiReference
@@ -54,6 +50,7 @@ public static class DIConfig
 						}
 				});
 		});
+
 		return services;
 	}
 
@@ -73,7 +70,6 @@ public static class DIConfig
 		configuration.Bind("JWT", jwtConfig);
 
 		services.AddSingleton(jwtConfig);
-
 
 		services.AddAuthentication(options =>
 		{
