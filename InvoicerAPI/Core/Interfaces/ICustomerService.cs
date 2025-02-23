@@ -13,7 +13,7 @@ public interface ICustomerService
 	/// </summary>
 	/// <param name="customerDto">The data transfer object containing Customer details.</param>
 	/// <returns>The created Customer as a data transfer object.</returns>
-	Task<CustomerDto> CreateCustomerAsync(BaseCustomerDto customerDto);
+	Task<CustomerDto> CreateCustomerAsync(Guid userId, BaseCustomerDto customerDto);
 
 	/// <summary>
 	/// Edites an existing Customer.

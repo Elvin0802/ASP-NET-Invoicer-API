@@ -17,9 +17,9 @@ public class CustomerService : ICustomerService
 		_context = context;
 	}
 
-	public Task<CustomerDto> CreateCustomerAsync(BaseCustomerDto customerDto)
+	public Task<CustomerDto> CreateCustomerAsync(Guid userId, BaseCustomerDto customerDto)
 	{
-		var user = _context.Users.Find(customerDto.UserId.ToString())
+		var user = _context.Users.Find(userId)
 					?? throw new KeyNotFoundException("User Not Found.");
 
 		var customer = new Customer()
@@ -29,8 +29,8 @@ public class CustomerService : ICustomerService
 			PhoneNumber = customerDto.PhoneNumber,
 			CreatedAt = DateTimeOffset.Now,
 			UpdatedAt = DateTimeOffset.Now,
+			UserId = user.Id,
 		};
-		customer.User = (User)user;
 
 		customer = _context.Customers
 								.Add(customer)
@@ -43,10 +43,7 @@ public class CustomerService : ICustomerService
 
 	public Task<bool> ArchiveCustomerAsync(Guid id)
 	{
-		var customer = _context.Customers
-								.Include(c => c.User)
-								.Include(c => c.Invoices)
-								.FirstOrDefault(c => c.Id == id);
+		var customer = _context.Customers.FirstOrDefault(c => c.Id == id);
 
 		if (customer is null)
 			return Task.FromResult(false);
@@ -79,7 +76,6 @@ public class CustomerService : ICustomerService
 	{
 		var customer = _context.Customers
 								.Include(c => c.User)
-								.Include(c => c.Invoices)
 								.FirstOrDefault(i => i.Id == id);
 
 		ArgumentNullException.ThrowIfNull(customer);
@@ -141,7 +137,6 @@ public class CustomerService : ICustomerService
 	{
 		var customer = _context.Customers
 								.Include(c => c.User)
-								.Include(c => c.Invoices)
 								.FirstOrDefault(i => i.Id == id);
 
 		ArgumentNullException.ThrowIfNull(customer);
@@ -169,7 +164,7 @@ public class CustomerService : ICustomerService
 		return new()
 		{
 			Id = customer.Id,
-			UserId = Guid.Parse(customer.User.Id),
+			UserId = customer.UserId,
 			Name = customer.Name,
 			Email = customer.Email,
 			PhoneNumber = customer.PhoneNumber,

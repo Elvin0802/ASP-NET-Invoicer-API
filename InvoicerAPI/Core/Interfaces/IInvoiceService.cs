@@ -12,9 +12,10 @@ public interface IInvoiceService
 	/// <summary>
 	/// Creates a new invoice.
 	/// </summary>
+	/// <param name="userId">The id of current user.</param>
 	/// <param name="invoiceDto">The invoice data transfer object.</param>
 	/// <returns>The created invoice dto.</returns>
-	Task<InvoiceDto> CreateInvoiceAsync(CreateInvoiceDto createInvoiceDto);
+	Task<InvoiceDto> CreateInvoiceAsync(Guid userId, CreateInvoiceDto createInvoiceDto);
 
 	/// <summary>
 	/// Edits an existing invoice.

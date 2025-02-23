@@ -29,10 +29,7 @@ public class InvoicesController : ControllerBase
 		{
 			var user = _userProvider.GetUserInfo();
 
-			dto.UserId = Guid.Parse(user!.Id);
-			dto.CustomerId = Guid.Parse("4b2faa90-7845-4b7a-abaa-5be358a88415");
-
-			var invoice = await _service.CreateInvoiceAsync(dto);
+			var invoice = await _service.CreateInvoiceAsync(user!.Id, dto);
 
 			return invoice is null ? NotFound() : invoice;
 		}

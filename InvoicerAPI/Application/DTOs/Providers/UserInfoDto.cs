@@ -2,10 +2,10 @@
 
 public class UserInfoDto
 {
-	public string Id { get; }
+	public Guid Id { get; }
 	public string UserEmail { get; }
 
-	public UserInfoDto(string id, string userEmail)
+	public UserInfoDto(Guid id, string userEmail)
 	{
 		Id = id;
 		UserEmail = userEmail;

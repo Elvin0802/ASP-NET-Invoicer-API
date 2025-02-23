@@ -60,8 +60,9 @@ public static class DIConfig
 	{
 		services.AddScoped<IRequestUserProvider, RequestUserProvider>();
 
-		services.AddIdentity<User, IdentityRole>()
-				.AddEntityFrameworkStores<InvoicerDbContext>();
+		services.AddIdentity<User, IdentityRole<Guid>>()
+				.AddEntityFrameworkStores<InvoicerDbContext>()
+				.AddDefaultTokenProviders();
 
 		services.AddScoped<IJwtService, JwtService>();
 

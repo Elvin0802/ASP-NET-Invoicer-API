@@ -1,5 +1,8 @@
-﻿using InvoicerAPI;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using InvoicerAPI;
 using InvoicerAPI.Application.Services;
+using InvoicerAPI.Application.Validation.Validators.Customers;
 using InvoicerAPI.Core.Interfaces;
 using InvoicerAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +24,9 @@ builder.Services.AddDbContext<InvoicerDbContext>(
 	{
 		options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 	});
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssembly(typeof(BaseCustomerValidator).Assembly);
 
 var app = builder.Build();
 

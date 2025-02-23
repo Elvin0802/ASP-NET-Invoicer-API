@@ -125,7 +125,7 @@ public class UserController : ControllerBase
 		{
 			if (request is null || request.Id == Guid.Empty) return BadRequest(nameof(request));
 
-			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id.ToString());
+			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id);
 
 			if (user is null) return Unauthorized("User not found. Update User Info is failed.");
 
@@ -136,7 +136,12 @@ public class UserController : ControllerBase
 				user.Address = request.Address;
 
 			if (!(string.IsNullOrEmpty(request.Email)) && request.Email != user.Email)
+			{
 				user.Email = request.Email;
+				user.UserName = request.Email;
+				//user.NormalizedUserName = request.Email.ToUpper();
+				//	user.NormalizedEmail = request.Email.ToUpper();
+			}
 
 			if (!(string.IsNullOrEmpty(request.PhoneNumber)) && request.PhoneNumber != user.PhoneNumber)
 				user.PhoneNumber = request.PhoneNumber;
@@ -164,7 +169,7 @@ public class UserController : ControllerBase
 				return BadRequest(nameof(request));
 			}
 
-			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id.ToString());
+			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.Id);
 
 			if (user is null)
 				return Unauthorized("User not found. Change User Password is failed.");
@@ -195,7 +200,7 @@ public class UserController : ControllerBase
 		{
 			if (id == Guid.Empty) return BadRequest("Id is Empty. Delete User is failed.");
 
-			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id.ToString());
+			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
 
 			if (user is null) return Unauthorized("User not found. Delete User is failed.");
 

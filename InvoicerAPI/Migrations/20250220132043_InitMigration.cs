@@ -5,7 +5,7 @@
 namespace InvoicerAPI.Migrations
 {
 	/// <inheritdoc />
-	public partial class InitMig : Migration
+	public partial class InitMigration : Migration
 	{
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,7 +14,7 @@ namespace InvoicerAPI.Migrations
 				name: "AspNetRoles",
 				columns: table => new
 				{
-					Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
 					NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
 					ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -28,14 +28,13 @@ namespace InvoicerAPI.Migrations
 				name: "AspNetUsers",
 				columns: table => new
 				{
-					Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-					Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
-					Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
 					Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
 					RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-					UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-					DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+					CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+					UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+					DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
 					UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
 					NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
 					Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -62,7 +61,7 @@ namespace InvoicerAPI.Migrations
 				{
 					Id = table.Column<int>(type: "int", nullable: false)
 						.Annotation("SqlServer:Identity", "1, 1"),
-					RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+					RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
 					ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
 				},
@@ -83,7 +82,7 @@ namespace InvoicerAPI.Migrations
 				{
 					Id = table.Column<int>(type: "int", nullable: false)
 						.Annotation("SqlServer:Identity", "1, 1"),
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
 					ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
 				},
@@ -105,7 +104,7 @@ namespace InvoicerAPI.Migrations
 					LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
 					ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
 					ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
 				},
 				constraints: table =>
 				{
@@ -122,8 +121,8 @@ namespace InvoicerAPI.Migrations
 				name: "AspNetUserRoles",
 				columns: table => new
 				{
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-					RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
 				},
 				constraints: table =>
 				{
@@ -146,7 +145,7 @@ namespace InvoicerAPI.Migrations
 				name: "AspNetUserTokens",
 				columns: table => new
 				{
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
 					Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
 					Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -170,7 +169,7 @@ namespace InvoicerAPI.Migrations
 					Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
 					Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
 					PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
 					UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
 					DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
@@ -192,7 +191,7 @@ namespace InvoicerAPI.Migrations
 				{
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
 					EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
 					TotalSum = table.Column<decimal>(type: "decimal(18,2)", nullable: false),

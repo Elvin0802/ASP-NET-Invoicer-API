@@ -20,11 +20,7 @@ public class InvoiceService : IInvoiceService
 
 	public Task<bool> ArchiveInvoiceAsync(Guid id)
 	{
-		var invoice = _context.Invoices
-							.Include(i => i.User)
-							.Include(i => i.Customer)
-							.Include(i => i.Rows)
-							.FirstOrDefault(i => i.Id == id);
+		var invoice = _context.Invoices.FirstOrDefault(i => i.Id == id);
 
 		if (invoice is null)
 			return Task.FromResult(false);
@@ -40,10 +36,10 @@ public class InvoiceService : IInvoiceService
 	public Task<InvoiceDto> ChangeInvoiceStatusAsync(Guid id, InvoiceStatus newStatus)
 	{
 		var invoice = _context.Invoices
-							.Include(i => i.User)
-							.Include(i => i.Customer)
-							.Include(i => i.Rows)
-							.FirstOrDefault(i => i.Id == id);
+								.Include(i => i.User)
+								.Include(i => i.Rows)
+								.Include(i => i.Customer)
+								.FirstOrDefault(i => i.Id == id);
 
 		ArgumentNullException.ThrowIfNull(invoice);
 
@@ -58,11 +54,11 @@ public class InvoiceService : IInvoiceService
 		return Task.FromResult(ConvertInvoiceToInvoiceDto(invoice));
 	}
 
-	public Task<InvoiceDto> CreateInvoiceAsync(CreateInvoiceDto createInvoiceDto)
+	public Task<InvoiceDto> CreateInvoiceAsync(Guid userId, CreateInvoiceDto createInvoiceDto)
 	{
-		var invoice = _context.Invoices
-							  .Add(ConvertCreateInvoiceDtoToInvoice(createInvoiceDto))
-							  .Entity;
+		var invoice = ConvertCreateInvoiceDtoToInvoice(userId, createInvoiceDto);
+
+		invoice = _context.Invoices.Add(invoice).Entity;
 
 		_context.SaveChanges();
 
@@ -71,11 +67,7 @@ public class InvoiceService : IInvoiceService
 
 	public Task<bool> DeleteInvoiceAsync(Guid id)
 	{
-		var invoice = _context.Invoices
-							.Include(i => i.User)
-							.Include(i => i.Customer)
-							.Include(i => i.Rows)
-							.FirstOrDefault(i => i.Id == id);
+		var invoice = _context.Invoices.FirstOrDefault(i => i.Id == id);
 
 		if (invoice is null || invoice.Status != InvoiceStatus.Created)
 			return Task.FromResult(false);
@@ -195,11 +187,12 @@ public class InvoiceService : IInvoiceService
 	/// <summary>
 	/// Convert create invoice dto to invoice.
 	/// </summary>
+	/// <param name="userId">id of user</param>
 	/// <param name="createInvoiceDto">Create Invoice Dto for converting to Invoice.</param>
 	/// <returns>Object of Invoice</returns>
-	public Invoice ConvertCreateInvoiceDtoToInvoice(CreateInvoiceDto createInvoiceDto)
+	public Invoice ConvertCreateInvoiceDtoToInvoice(Guid userId, CreateInvoiceDto createInvoiceDto)
 	{
-		var user = _context.Users.Find(createInvoiceDto.UserId.ToString())
+		var user = _context.Users.Find(userId)
 					?? throw new KeyNotFoundException("User Not Found.");
 
 		var customer = _context.Customers.Find(createInvoiceDto.CustomerId)
@@ -207,9 +200,9 @@ public class InvoiceService : IInvoiceService
 
 		var invoice = new Invoice();
 
-		invoice.Customer = customer;
+		invoice.CustomerId = customer.Id;
 
-		invoice.User = (User)user;
+		invoice.UserId = user.Id;
 
 		invoice.CreatedAt = DateTime.UtcNow;
 

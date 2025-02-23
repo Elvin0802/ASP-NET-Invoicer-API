@@ -26,6 +26,6 @@ public class RequestUserProvider : IRequestUserProvider
 								.Identity!
 								.Name;
 
-		return new UserInfoDto(id, email!);
+		return new UserInfoDto(Guid.Parse(id), email!);
 	}
 }

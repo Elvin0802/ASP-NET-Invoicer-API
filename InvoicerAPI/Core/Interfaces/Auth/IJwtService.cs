@@ -5,7 +5,7 @@ namespace InvoicerAPI.Core.Interfaces.Auth;
 public interface IJwtService
 {
 	string GenerateSecurityToken(
-		string id,
+		Guid id,
 		string email,
 		IEnumerable<string> roles,
 		IEnumerable<Claim> userClaims

@@ -28,9 +28,7 @@ public class ClientsController : ControllerBase
 		{
 			var user = _userProvider.GetUserInfo();
 
-			dto.UserId = Guid.Parse(user!.Id);
-
-			var customer = await _service.CreateCustomerAsync(dto);
+			var customer = await _service.CreateCustomerAsync(user.Id, dto);
 
 			return customer is null ? throw new Exception() : customer;
 		}
