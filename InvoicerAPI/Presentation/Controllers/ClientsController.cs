@@ -21,7 +21,7 @@ public class ClientsController : ControllerBase
 		_userProvider = userProvider;
 	}
 
-	[HttpPost("/create-customer")]
+	[HttpPost("create")]
 	public async Task<ActionResult<CustomerDto>> CreateCustomer([FromBody] BaseCustomerDto dto)
 	{
 		try
@@ -53,7 +53,7 @@ public class ClientsController : ControllerBase
 		}
 	}
 
-	[HttpGet("/{id}/customer")]
+	[HttpGet("{id}")]
 	public async Task<ActionResult<CustomerDto>> GetCustomer(Guid id)
 	{
 		try
@@ -69,7 +69,7 @@ public class ClientsController : ControllerBase
 	}
 
 
-	[HttpDelete("/{id}/delete-customer")]
+	[HttpDelete("{id}/delete")]
 	public async Task<ActionResult> DeleteCustomer(Guid id)
 	{
 		try
@@ -82,7 +82,7 @@ public class ClientsController : ControllerBase
 		}
 	}
 
-	[HttpDelete("/{id}/archive-customer")]
+	[HttpDelete("{id}/archive")]
 	public async Task<ActionResult> ArchiveCustomer(Guid id)
 	{
 		try
@@ -95,7 +95,7 @@ public class ClientsController : ControllerBase
 		}
 	}
 
-	[HttpPut("/{id}/edit-customer")]
+	[HttpPut("{id}/edit")]
 	public async Task<ActionResult<CustomerDto>> EditCustomer(Guid id, [FromBody] BaseCustomerDto dto)
 	{
 		try

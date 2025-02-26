@@ -25,7 +25,7 @@ public class UserController : ControllerBase
 		_jwtService = jwtService;
 	}
 
-	[HttpPost("/login")]
+	[HttpPost("login")]
 	public async Task<ActionResult<AuthTokenDto>> Login([FromBody] LoginUserRequestDto request)
 	{
 		try
@@ -46,7 +46,7 @@ public class UserController : ControllerBase
 		}
 	}
 
-	[HttpPost("/register")]
+	[HttpPost("register")]
 	public async Task<ActionResult<AuthTokenDto>> Register([FromBody] RegisterUserRequestDto request)
 	{
 		try
@@ -101,7 +101,7 @@ public class UserController : ControllerBase
 		};
 	}
 
-	[HttpPost("/refresh")]
+	[HttpPost("refresh")]
 	public async Task<ActionResult<AuthTokenDto>> Refresh([FromBody] RefreshTokenRequestDto request)
 	{
 		try
@@ -118,7 +118,7 @@ public class UserController : ControllerBase
 		}
 	}
 
-	[HttpPut("/update-info")]
+	[HttpPut("update-info")]
 	public async Task<ActionResult<AuthTokenDto>> UpdateUserInfo([FromBody] UpdateUserInfoRequestDto request)
 	{
 		try
@@ -156,7 +156,7 @@ public class UserController : ControllerBase
 		}
 	}
 
-	[HttpPut("/change-password")]
+	[HttpPut("change-password")]
 	public async Task<ActionResult<AuthTokenDto>> ChangeUserPassword([FromBody] ChangeUserPasswordRequestDto request)
 	{
 		try
@@ -193,7 +193,7 @@ public class UserController : ControllerBase
 	}
 
 
-	[HttpDelete("/users/{id}/delete")]
+	[HttpDelete("{id}/delete")]
 	public async Task<ActionResult> DeleteUser(Guid id)
 	{
 		try

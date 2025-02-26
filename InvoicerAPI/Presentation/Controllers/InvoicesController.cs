@@ -22,7 +22,7 @@ public class InvoicesController : ControllerBase
 		_userProvider = userProvider;
 	}
 
-	[HttpPost("/create-invoice")]
+	[HttpPost("create")]
 	public async Task<ActionResult<InvoiceDto>> CreateInvoice([FromBody] CreateInvoiceDto dto)
 	{
 		try
@@ -54,7 +54,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpGet("/{id}/invoice")]
+	[HttpGet("{id}")]
 	public async Task<ActionResult<InvoiceDto>> GetInvoice(Guid id)
 	{
 		try
@@ -69,7 +69,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpPatch("/{id}/change-status")]
+	[HttpPatch("{id}/change-status")]
 	public async Task<ActionResult<InvoiceDto>> ChangeInvoiceStatus(Guid id, [FromBody] InvoiceStatus newStatus)
 	{
 		try
@@ -84,7 +84,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpPut("/{id}/edit-invoice")]
+	[HttpPut("{id}/edit")]
 	public async Task<ActionResult<InvoiceDto>> EditInvoice(Guid id, [FromBody] EditInvoiceDto dto)
 	{
 		try
@@ -99,7 +99,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpDelete("/{id}/delete-invoice")]
+	[HttpDelete("{id}/delete")]
 	public async Task<ActionResult> DeleteInvoice(Guid id)
 	{
 		try
@@ -112,7 +112,7 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpDelete("/{id}/archive-invoice")]
+	[HttpDelete("{id}/archive")]
 	public async Task<ActionResult> ArchiveInvoice(Guid id)
 	{
 		try

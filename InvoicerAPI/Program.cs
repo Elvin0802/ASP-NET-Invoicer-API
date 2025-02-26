@@ -25,6 +25,14 @@ builder.Services.AddDbContext<InvoicerDbContext>(
 		options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 	});
 
+builder.Services.AddCors(options => options.AddPolicy("CORSPolicy", builder =>
+{
+	builder.AllowAnyMethod()
+			   .AllowAnyHeader()
+			   .WithOrigins("http://localhost:5174", "http://localhost:5173")
+			   .AllowCredentials();
+}));
+
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(typeof(BaseCustomerValidator).Assembly);
 
@@ -36,6 +44,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+app.UseCors("CORSPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
