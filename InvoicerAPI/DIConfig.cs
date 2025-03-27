@@ -1,4 +1,5 @@
 ﻿using InvoicerAPI.Application.DTOs.Auth;
+using InvoicerAPI.Application.Jobs;
 using InvoicerAPI.Application.Services.Auth;
 using InvoicerAPI.Core.Entities;
 using InvoicerAPI.Core.Interfaces.Auth;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
 using System.Text;
 
 namespace InvoicerAPI;
@@ -94,6 +96,26 @@ public static class DIConfig
 				= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret))
 			};
 		});
+
+		return services;
+	}
+
+	public static IServiceCollection AddQuartzJobs(this IServiceCollection services)
+	{
+		services.AddQuartz(q =>
+		{
+			var jobKey = new JobKey("CleanupJob");
+
+			q.AddJob<DbCleanupJob>(opts => opts.WithIdentity(jobKey));
+
+			// her bazar gunu , saat 23:00 da ishleyecek.
+			q.AddTrigger(opts =>
+				opts.ForJob(jobKey)
+					.WithIdentity("CleanupTrigger")
+					.WithSchedule(CronScheduleBuilder.WeeklyOnDayAndHourAndMinute(DayOfWeek.Sunday, 23, 0))
+			);
+		});
+		services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 		return services;
 	}

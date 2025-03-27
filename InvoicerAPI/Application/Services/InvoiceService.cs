@@ -204,7 +204,7 @@ public class InvoiceService : IInvoiceService
 
 		invoice.UserId = user.Id;
 
-		invoice.CreatedAt = DateTime.UtcNow;
+		invoice.CreatedAt = DateTimeOffset.UtcNow;
 
 		invoice.UpdatedAt = invoice.CreatedAt;
 

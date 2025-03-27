@@ -36,6 +36,8 @@ builder.Services.AddCors(options => options.AddPolicy("CORSPolicy", builder =>
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(typeof(BaseCustomerValidator).Assembly);
 
+builder.Services.AddQuartzJobs();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
