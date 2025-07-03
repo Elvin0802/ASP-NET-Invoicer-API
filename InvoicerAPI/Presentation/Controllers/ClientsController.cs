@@ -68,7 +68,6 @@ public class ClientsController : ControllerBase
 		}
 	}
 
-
 	[HttpDelete("{id}/delete")]
 	public async Task<ActionResult> DeleteCustomer(Guid id)
 	{

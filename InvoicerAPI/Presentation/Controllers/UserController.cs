@@ -1,7 +1,10 @@
 ﻿using InvoicerAPI.Application.DTOs.Auth;
+using InvoicerAPI.Application.DTOs.Providers;
 using InvoicerAPI.Application.DTOs.Users;
 using InvoicerAPI.Core.Entities;
 using InvoicerAPI.Core.Interfaces.Auth;
+using InvoicerAPI.Core.Interfaces.Providers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +18,17 @@ public class UserController : ControllerBase
 	private readonly UserManager<User> _userManager;
 	private readonly SignInManager<User> _signInManager;
 	private readonly IJwtService _jwtService;
+	private readonly IRequestUserProvider _userProvider;
 
 	public UserController(UserManager<User> userManager,
 							SignInManager<User> signInManager,
-							IJwtService jwtService)
+							IJwtService jwtService,
+							IRequestUserProvider userProvider)
 	{
 		_userManager = userManager;
 		_signInManager = signInManager;
 		_jwtService = jwtService;
+		_userProvider = userProvider;
 	}
 
 	[HttpPost("login")]
@@ -111,6 +117,24 @@ public class UserController : ControllerBase
 			if (user is null) return Unauthorized("Refresh is failed.");
 
 			return Ok(await GenerateToken(user));
+		}
+		catch
+		{
+			return StatusCode(500, "An unexpected error occurred.");
+		}
+	}
+
+	[HttpGet("user-data")]
+	[Authorize]
+	public async Task<ActionResult<UserInfoDto>> GetUserData()
+	{
+		try
+		{
+			var user = _userProvider.GetUserInfo();
+
+			if (user is null) return Unauthorized("Get User Data is failed.");
+
+			return Ok(user);
 		}
 		catch
 		{
