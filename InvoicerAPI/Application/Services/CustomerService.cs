@@ -11,10 +11,12 @@ namespace InvoicerAPI.Application.Services;
 public class CustomerService : ICustomerService
 {
 	private readonly InvoicerDbContext _context;
+	private readonly IInvoiceService _service;
 
-	public CustomerService(InvoicerDbContext context)
+	public CustomerService(InvoicerDbContext context, IInvoiceService service)
 	{
 		_context = context;
+		_service = service;
 	}
 
 	public Task<CustomerDto> CreateCustomerAsync(Guid userId, BaseCustomerDto customerDto)
@@ -47,6 +49,10 @@ public class CustomerService : ICustomerService
 
 		if (customer is null)
 			return Task.FromResult(false);
+
+		if (customer.Invoices.Count > 0)
+			foreach (var item in customer.Invoices)
+				_service.ArchiveInvoiceAsync(item.Id);
 
 		customer.DeletedAt = DateTimeOffset.UtcNow;
 
