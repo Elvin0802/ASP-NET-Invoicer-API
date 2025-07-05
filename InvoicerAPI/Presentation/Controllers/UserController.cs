@@ -237,4 +237,18 @@ public class UserController : ControllerBase
 			return StatusCode(500, "An unexpected error occurred.");
 		}
 	}
+
+
+	[HttpDelete("check-api")]
+	public async Task<IActionResult> CheckAPI()
+	{
+		try
+		{
+			return Ok("Api works...");
+		}
+		catch
+		{
+			return StatusCode(500, "An unexpected error occurred.");
+		}
+	}
 }

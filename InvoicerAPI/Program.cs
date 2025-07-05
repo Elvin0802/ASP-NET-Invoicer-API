@@ -6,6 +6,9 @@ using InvoicerAPI.Application.Validation.Validators.Customers;
 using InvoicerAPI.Core.Interfaces;
 using InvoicerAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,11 +28,14 @@ builder.Services.AddDbContext<InvoicerDbContext>(
 		options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 	});
 
+builder.Services.AddHealthChecks()
+.AddCheck("self", () => HealthCheckResult.Healthy()); // Liveness.
+
 builder.Services.AddCors(options => options.AddPolicy("CORSPolicy", builder =>
 {
 	builder.AllowAnyMethod()
 			   .AllowAnyHeader()
-			   .WithOrigins("http://localhost:5174", "http://localhost:5173", "http://localhost:3000")
+			   .WithOrigins("http://localhost:3000", "https://lvn-invoicer-app.vercel.app")
 			   .AllowCredentials();
 }));
 
@@ -51,6 +57,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// LIVENESS
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+	Predicate = check => check.Name == "self"
+});
+
+app.MapGet("/health/", () => "The API is working successfully.");
 
 app.Run();
 
