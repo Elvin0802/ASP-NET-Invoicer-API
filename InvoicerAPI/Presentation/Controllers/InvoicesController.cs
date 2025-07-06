@@ -69,14 +69,14 @@ public class InvoicesController : ControllerBase
 		}
 	}
 
-	[HttpPatch("{id}/change-status")]
-	public async Task<ActionResult<InvoiceDto>> ChangeInvoiceStatus(Guid id, [FromBody] InvoiceStatus newStatus)
+	[HttpPatch("{id}/change-status/{newStatus}")]
+	public async Task<ActionResult<InvoiceDto>> ChangeInvoiceStatus(Guid id, int newStatus)
 	{
 		try
 		{
-			var invoice = await _service.ChangeInvoiceStatusAsync(id, newStatus);
+			var invoice = await _service.ChangeInvoiceStatusAsync(id, (InvoiceStatus)newStatus);
 
-			return invoice is null ? NotFound() : invoice;
+			return invoice is null ? NotFound() : Ok(invoice);
 		}
 		catch
 		{
